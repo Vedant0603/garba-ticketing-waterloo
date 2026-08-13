@@ -2,27 +2,14 @@
 
 require("dotenv").config();
 
-const crypto =
-  require("crypto");
+const crypto = require("crypto");
+const cors = require("cors");
+const express = require("express");
+const fs = require("fs");
+const nodemailer = require("nodemailer");
+const path = require("path");
 
-const cors =
-  require("cors");
-
-const express =
-  require("express");
-
-const fs =
-  require("fs");
-
-const nodemailer =
-  require("nodemailer");
-
-const path =
-  require("path");
-
-
-const app =
-  express();
+const app = express();
 
 
 /* ==========================================================================
@@ -34,7 +21,6 @@ const DATA_DIRECTORY =
     __dirname,
     "data"
   );
-
 
 const ORDERS_FILE =
   path.join(
@@ -53,7 +39,6 @@ const PORT =
     3000
   );
 
-
 const FRONTEND_URL =
   String(
     process.env.FRONTEND_URL ||
@@ -63,32 +48,26 @@ const FRONTEND_URL =
     ""
   );
 
-
 const SQUARE_ACCESS_TOKEN =
   process.env
     .SQUARE_ACCESS_TOKEN;
 
-
 const SQUARE_LOCATION_ID =
   process.env
     .SQUARE_LOCATION_ID;
-
 
 const SQUARE_ENVIRONMENT =
   process.env
     .SQUARE_ENVIRONMENT ||
   "sandbox";
 
-
 const SQUARE_WEBHOOK_SIGNATURE_KEY =
   process.env
     .SQUARE_WEBHOOK_SIGNATURE_KEY;
 
-
 const SQUARE_WEBHOOK_URL =
   process.env
     .SQUARE_WEBHOOK_URL;
-
 
 const TICKET_PRICE_CENTS =
   Number(
@@ -97,14 +76,12 @@ const TICKET_PRICE_CENTS =
     900
   );
 
-
 const MAX_CAPACITY =
   Number(
     process.env
       .MAX_CAPACITY ||
     550
   );
-
 
 const PENDING_ORDER_MINUTES =
   Number(
@@ -122,7 +99,6 @@ const GMAIL_USER =
   process.env
     .GMAIL_USER;
 
-
 const GMAIL_APP_PASSWORD =
   String(
     process.env
@@ -132,7 +108,6 @@ const GMAIL_APP_PASSWORD =
     /\s/g,
     ""
   );
-
 
 const EMAIL_FROM =
   process.env
@@ -147,7 +122,6 @@ const EMAIL_FROM =
 const GOOGLE_SHEETS_WEBHOOK_URL =
   process.env
     .GOOGLE_SHEETS_WEBHOOK_URL;
-
 
 const GOOGLE_SHEETS_SECRET =
   process.env
@@ -173,20 +147,15 @@ const emailTransporter =
   GMAIL_USER &&
   GMAIL_APP_PASSWORD
     ? nodemailer.createTransport({
-
-        service:
-          "gmail",
+        service: "gmail",
 
         auth: {
-
           user:
             GMAIL_USER,
 
           pass:
             GMAIL_APP_PASSWORD
-
         }
-
       })
     : null;
 
@@ -206,13 +175,11 @@ function ensureOrdersFile() {
     fs.mkdirSync(
       DATA_DIRECTORY,
       {
-        recursive:
-          true
+        recursive: true
       }
     );
 
   }
-
 
   if (
     !fs.existsSync(
@@ -235,7 +202,6 @@ function readOrdersRaw() {
 
   ensureOrdersFile();
 
-
   try {
 
     const contents =
@@ -243,7 +209,6 @@ function readOrdersRaw() {
         ORDERS_FILE,
         "utf8"
       );
-
 
     if (
       !contents.trim()
@@ -253,19 +218,16 @@ function readOrdersRaw() {
 
     }
 
-
     const parsed =
       JSON.parse(
         contents
       );
-
 
     return Array.isArray(
       parsed
     )
       ? parsed
       : [];
-
 
   } catch (
     error
@@ -275,7 +237,6 @@ function readOrdersRaw() {
       "Could not read orders:",
       error
     );
-
 
     return [];
 
@@ -290,10 +251,8 @@ function writeOrders(
 
   ensureOrdersFile();
 
-
   const temporaryFile =
     `${ORDERS_FILE}.tmp`;
-
 
   fs.writeFileSync(
     temporaryFile,
@@ -304,7 +263,6 @@ function writeOrders(
     ),
     "utf8"
   );
-
 
   fs.renameSync(
     temporaryFile,
@@ -319,7 +277,6 @@ function expireOldPendingOrders() {
   const orders =
     readOrdersRaw();
 
-
   const expirationTime =
     Date.now() -
     (
@@ -328,10 +285,8 @@ function expireOldPendingOrders() {
       1000
     );
 
-
   let changed =
     false;
-
 
   for (
     const order
@@ -347,12 +302,10 @@ function expireOldPendingOrders() {
 
     }
 
-
     const createdTime =
       new Date(
         order.createdAt
       ).getTime();
-
 
     if (
       Number.isFinite(
@@ -365,20 +318,16 @@ function expireOldPendingOrders() {
       order.status =
         "EXPIRED";
 
-
       order.paymentStatus =
         "EXPIRED";
-
 
       order.expiredAt =
         new Date()
           .toISOString();
 
-
       order.updatedAt =
         new Date()
           .toISOString();
-
 
       changed =
         true;
@@ -386,7 +335,6 @@ function expireOldPendingOrders() {
     }
 
   }
-
 
   if (
     changed
@@ -397,7 +345,6 @@ function expireOldPendingOrders() {
     );
 
   }
-
 
   return orders;
 
@@ -419,7 +366,6 @@ function updateOrder(
   const orders =
     readOrders();
 
-
   const index =
     orders.findIndex(
       (
@@ -429,7 +375,6 @@ function updateOrder(
         localOrderId
     );
 
-
   if (
     index === -1
   ) {
@@ -438,24 +383,18 @@ function updateOrder(
 
   }
 
-
   orders[index] = {
-
     ...orders[index],
-
     ...changes,
 
     updatedAt:
       new Date()
         .toISOString()
-
   };
-
 
   writeOrders(
     orders
   );
-
 
   return orders[index];
 
@@ -581,7 +520,6 @@ function normalizePhone(
       ""
     );
 
-
   if (
     digits.length ===
     10
@@ -590,7 +528,6 @@ function normalizePhone(
     return `+1${digits}`;
 
   }
-
 
   if (
     digits.length ===
@@ -603,7 +540,6 @@ function normalizePhone(
     return `+${digits}`;
 
   }
-
 
   return cleanText(
     phone,
@@ -620,13 +556,8 @@ function formatCad(
   return new Intl.NumberFormat(
     "en-CA",
     {
-
-      style:
-        "currency",
-
-      currency:
-        "CAD"
-
+      style: "currency",
+      currency: "CAD"
     }
   ).format(
     Number(
@@ -699,33 +630,25 @@ function validateCheckoutRequest(
       100
     );
 
-
   const email =
     cleanText(
       body.email,
       150
     ).toLowerCase();
 
-
   const phone =
     normalizePhone(
       body.phone
     );
-
 
   const quantity =
     Number(
       body.quantity
     );
 
-
-  /*
-   * Only literal boolean TRUE means opt-in.
-   */
   const marketingConsent =
     body.marketingConsent ===
     true;
-
 
   if (
     fullName.length <
@@ -738,7 +661,6 @@ function validateCheckoutRequest(
 
   }
 
-
   if (
     !isValidEmail(
       email
@@ -750,7 +672,6 @@ function validateCheckoutRequest(
     );
 
   }
-
 
   if (
     phone
@@ -768,7 +689,6 @@ function validateCheckoutRequest(
 
   }
 
-
   if (
     !Number.isInteger(
       quantity
@@ -785,19 +705,12 @@ function validateCheckoutRequest(
 
   }
 
-
   return {
-
     fullName,
-
     email,
-
     phone,
-
     quantity,
-
     marketingConsent
-
   };
 
 }
@@ -822,10 +735,8 @@ function isValidSquareWebhookSignature(
 
   }
 
-
   const stringToSign =
     `${SQUARE_WEBHOOK_URL}${rawBody}`;
-
 
   const expectedSignature =
     crypto
@@ -841,12 +752,10 @@ function isValidSquareWebhookSignature(
         "base64"
       );
 
-
   const expectedBuffer =
     Buffer.from(
       expectedSignature
     );
-
 
   const providedBuffer =
     Buffer.from(
@@ -854,7 +763,6 @@ function isValidSquareWebhookSignature(
         providedSignature
       )
     );
-
 
   if (
     expectedBuffer.length !==
@@ -865,7 +773,6 @@ function isValidSquareWebhookSignature(
 
   }
 
-
   return crypto.timingSafeEqual(
     expectedBuffer,
     providedBuffer
@@ -875,8 +782,7 @@ function isValidSquareWebhookSignature(
 
 
 /* ==========================================================================
-   GOOGLE SHEETS
-   PAID ORDERS ONLY
+   GOOGLE SHEETS — PAID ORDERS ONLY
    ========================================================================== */
 
 async function savePaidOrderToGoogleSheet(
@@ -885,7 +791,6 @@ async function savePaidOrderToGoogleSheet(
 
   const orders =
     readOrders();
-
 
   const order =
     orders.find(
@@ -896,7 +801,6 @@ async function savePaidOrderToGoogleSheet(
         localOrderId
     );
 
-
   if (
     !order
   ) {
@@ -905,13 +809,6 @@ async function savePaidOrderToGoogleSheet(
 
   }
 
-
-  /*
-   * ABSOLUTE RULE:
-   *
-   * Do not send pending, expired or failed orders
-   * to Google Sheets.
-   */
   if (
     order.status !==
       "PAID" ||
@@ -928,7 +825,6 @@ async function savePaidOrderToGoogleSheet(
 
   }
 
-
   if (
     order.sheetStatus ===
     "SAVED"
@@ -937,7 +833,6 @@ async function savePaidOrderToGoogleSheet(
     return;
 
   }
-
 
   if (
     !GOOGLE_SHEETS_WEBHOOK_URL ||
@@ -948,7 +843,6 @@ async function savePaidOrderToGoogleSheet(
       "Google Sheets is not configured."
     );
 
-
     updateOrder(
       localOrderId,
       {
@@ -957,26 +851,21 @@ async function savePaidOrderToGoogleSheet(
       }
     );
 
-
     return;
 
   }
 
-
   updateOrder(
     localOrderId,
     {
-
       sheetStatus:
         "SENDING",
 
       sheetAttemptedAt:
         new Date()
           .toISOString()
-
     }
   );
-
 
   try {
 
@@ -984,24 +873,16 @@ async function savePaidOrderToGoogleSheet(
       await fetch(
         GOOGLE_SHEETS_WEBHOOK_URL,
         {
-
           method:
             "POST",
 
           headers: {
-
-            /*
-             * text/plain avoids unnecessary CORS/preflight
-             * complications with Apps Script.
-             */
             "Content-Type":
               "text/plain;charset=utf-8"
-
           },
 
           body:
             JSON.stringify({
-
               secret:
                 GOOGLE_SHEETS_SECRET,
 
@@ -1061,19 +942,14 @@ async function savePaidOrderToGoogleSheet(
 
               paymentId:
                 order.paymentId
-
             })
-
         }
       );
-
 
     const responseText =
       await response.text();
 
-
     let result;
-
 
     try {
 
@@ -1085,14 +961,11 @@ async function savePaidOrderToGoogleSheet(
     } catch {
 
       result = {
-
         success:
           response.ok
-
       };
 
     }
-
 
     if (
       !response.ok ||
@@ -1106,11 +979,9 @@ async function savePaidOrderToGoogleSheet(
 
     }
 
-
     updateOrder(
       localOrderId,
       {
-
         sheetStatus:
           "SAVED",
 
@@ -1120,16 +991,13 @@ async function savePaidOrderToGoogleSheet(
 
         sheetError:
           null
-
       }
     );
-
 
     console.log(
       "Paid order saved to Google Sheets:",
       order.admissionCode
     );
-
 
   } catch (
     error
@@ -1140,11 +1008,9 @@ async function savePaidOrderToGoogleSheet(
       error
     );
 
-
     updateOrder(
       localOrderId,
       {
-
         sheetStatus:
           "FAILED",
 
@@ -1153,7 +1019,6 @@ async function savePaidOrderToGoogleSheet(
             error.message,
             500
           )
-
       }
     );
 
@@ -1188,6 +1053,7 @@ function buildEmailText(
     "Doors open: 6:00 PM",
     "Garba Night: 7:00 PM – 11:00 PM",
     "RIM Park",
+    "2001 University Ave E",
     "Waterloo, Ontario",
     "",
     `Order reference: ${order.localOrderId}`
@@ -1207,12 +1073,10 @@ function buildEmailHtml(
       order.fullName
     );
 
-
   const code =
     escapeHtml(
       order.admissionCode
     );
-
 
   return `
   <div style="
@@ -1373,6 +1237,10 @@ function buildEmailHtml(
 
           <br />
 
+          2001 University Ave E
+
+          <br />
+
           Waterloo, Ontario
 
         </div>
@@ -1394,7 +1262,6 @@ function claimEmailDelivery(
   const orders =
     readOrders();
 
-
   const index =
     orders.findIndex(
       (
@@ -1404,7 +1271,6 @@ function claimEmailDelivery(
         localOrderId
     );
 
-
   if (
     index === -1
   ) {
@@ -1413,10 +1279,8 @@ function claimEmailDelivery(
 
   }
 
-
   const order =
     orders[index];
-
 
   if (
     order.status !==
@@ -1431,29 +1295,23 @@ function claimEmailDelivery(
 
   }
 
-
   order.emailStatus =
     "SENDING";
-
 
   order.emailAttemptedAt =
     new Date()
       .toISOString();
 
-
   order.updatedAt =
     new Date()
       .toISOString();
 
-
   orders[index] =
     order;
-
 
   writeOrders(
     orders
   );
-
 
   return order;
 
@@ -1476,12 +1334,10 @@ async function sendConfirmationEmail(
 
   }
 
-
   const order =
     claimEmailDelivery(
       localOrderId
     );
-
 
   if (
     !order
@@ -1491,12 +1347,10 @@ async function sendConfirmationEmail(
 
   }
 
-
   try {
 
     const result =
       await emailTransporter.sendMail({
-
         from:
           EMAIL_FROM,
 
@@ -1515,14 +1369,11 @@ async function sendConfirmationEmail(
           buildEmailHtml(
             order
           )
-
       });
-
 
     updateOrder(
       localOrderId,
       {
-
         emailStatus:
           "SENT",
 
@@ -1535,16 +1386,13 @@ async function sendConfirmationEmail(
 
         emailError:
           null
-
       }
     );
-
 
     console.log(
       "Confirmation email sent:",
       order.email
     );
-
 
   } catch (
     error
@@ -1555,11 +1403,9 @@ async function sendConfirmationEmail(
       error
     );
 
-
     updateOrder(
       localOrderId,
       {
-
         emailStatus:
           "FAILED",
 
@@ -1568,7 +1414,6 @@ async function sendConfirmationEmail(
             error.message,
             500
           )
-
       }
     );
 
@@ -1583,7 +1428,6 @@ async function sendConfirmationEmail(
 
 app.use(
   cors({
-
     origin:
       function (
         origin,
@@ -1591,20 +1435,11 @@ app.use(
       ) {
 
         const allowedOrigins = [
-
           FRONTEND_URL,
-
           "http://127.0.0.1:5500",
-
           "http://localhost:5500"
-
         ];
 
-
-        /*
-         * file:// pages send no normal origin.
-         * Allow no-origin during local testing.
-         */
         if (
           !origin ||
           allowedOrigins.includes(
@@ -1619,7 +1454,6 @@ app.use(
 
         }
 
-
         callback(
           new Error(
             "Origin not allowed by CORS."
@@ -1627,7 +1461,6 @@ app.use(
         );
 
       }
-
   })
 );
 
@@ -1641,10 +1474,8 @@ app.post(
   "/webhook",
 
   express.raw({
-
     type:
       "application/json"
-
   }),
 
   (
@@ -1654,17 +1485,39 @@ app.post(
 
     try {
 
+      /*
+       * Until the Waterloo webhook is configured,
+       * reject webhook requests safely without
+       * crashing the server.
+       */
+      if (
+        !SQUARE_WEBHOOK_SIGNATURE_KEY ||
+        !SQUARE_WEBHOOK_URL
+      ) {
+
+        console.error(
+          "Square webhook received before webhook configuration was completed."
+        );
+
+        return response
+          .status(
+            503
+          )
+          .send(
+            "Webhook not configured"
+          );
+
+      }
+
       const rawBody =
         request.body.toString(
           "utf8"
         );
 
-
       const signature =
         request.get(
           "x-square-hmacsha256-signature"
         );
-
 
       if (
         !isValidSquareWebhookSignature(
@@ -1677,7 +1530,6 @@ app.post(
           "Rejected Square webhook: invalid signature."
         );
 
-
         return response
           .status(
             403
@@ -1688,18 +1540,15 @@ app.post(
 
       }
 
-
       const event =
         JSON.parse(
           rawBody
         );
 
-
       console.log(
         "Square webhook:",
         event.type
       );
-
 
       if (
         event.type !==
@@ -1716,12 +1565,10 @@ app.post(
 
       }
 
-
       const payment =
         event?.data
           ?.object
           ?.payment;
-
 
       if (
         !payment
@@ -1737,10 +1584,6 @@ app.post(
 
       }
 
-
-      /*
-       * DO NOTHING WITH SHEETS UNTIL COMPLETED.
-       */
       if (
         payment.status !==
         "COMPLETED"
@@ -1756,14 +1599,11 @@ app.post(
 
       }
 
-
       const squareOrderId =
         payment.order_id;
 
-
       const orders =
         readOrders();
-
 
       const orderIndex =
         orders.findIndex(
@@ -1774,7 +1614,6 @@ app.post(
             squareOrderId
         );
 
-
       if (
         orderIndex === -1
       ) {
@@ -1783,7 +1622,6 @@ app.post(
           "Unknown Square order:",
           squareOrderId
         );
-
 
         return response
           .status(
@@ -1795,16 +1633,11 @@ app.post(
 
       }
 
-
       const order =
         orders[
           orderIndex
         ];
 
-
-      /*
-       * Square can send duplicate webhooks.
-       */
       if (
         order.status ===
         "PAID"
@@ -1817,7 +1650,6 @@ app.post(
           .send(
             "Already processed"
           );
-
 
         if (
           order.emailStatus !==
@@ -1833,7 +1665,6 @@ app.post(
 
         }
 
-
         if (
           order.sheetStatus !==
           "SAVED"
@@ -1848,11 +1679,9 @@ app.post(
 
         }
 
-
         return;
 
       }
-
 
       const paidAmountCents =
         Number(
@@ -1861,16 +1690,11 @@ app.post(
             ?.amount
         );
 
-
       const paidCurrency =
         payment
           .amount_money
           ?.currency;
 
-
-      /*
-       * Verify exact amount.
-       */
       if (
         paidAmountCents !==
         Number(
@@ -1881,34 +1705,27 @@ app.post(
         order.status =
           "MANUAL_REVIEW";
 
-
         order.paymentStatus =
           "COMPLETED";
-
 
         order.reviewReason =
           "PAYMENT_AMOUNT_MISMATCH";
 
-
         order.paymentId =
           payment.id;
-
 
         order.updatedAt =
           new Date()
             .toISOString();
-
 
         orders[
           orderIndex
         ] =
           order;
 
-
         writeOrders(
           orders
         );
-
 
         return response
           .status(
@@ -1920,10 +1737,6 @@ app.post(
 
       }
 
-
-      /*
-       * Verify currency.
-       */
       if (
         paidCurrency !==
         "CAD"
@@ -1932,34 +1745,27 @@ app.post(
         order.status =
           "MANUAL_REVIEW";
 
-
         order.paymentStatus =
           "COMPLETED";
-
 
         order.reviewReason =
           "PAYMENT_CURRENCY_MISMATCH";
 
-
         order.paymentId =
           payment.id;
-
 
         order.updatedAt =
           new Date()
             .toISOString();
-
 
         orders[
           orderIndex
         ] =
           order;
 
-
         writeOrders(
           orders
         );
-
 
         return response
           .status(
@@ -1971,101 +1777,75 @@ app.post(
 
       }
 
-
-      /*
-       * VERIFIED SUCCESSFUL PAYMENT.
-       */
       order.status =
         "PAID";
-
 
       order.paymentStatus =
         "COMPLETED";
 
-
       order.paymentId =
         payment.id;
-
 
       order.paidAmountCents =
         paidAmountCents;
 
-
       order.currency =
         paidCurrency;
-
 
       order.admissionCode =
         order.admissionCode ||
         generateAdmissionCode();
 
-
       order.paidAt =
         new Date()
           .toISOString();
-
 
       order.updatedAt =
         new Date()
           .toISOString();
 
-
       order.checkedIn =
         false;
-
 
       order.emailStatus =
         order.emailStatus ||
         "NOT_SENT";
 
-
       order.sheetStatus =
         order.sheetStatus ||
         "NOT_SAVED";
 
-
       order.webhookEventId =
         event.event_id;
-
 
       orders[
         orderIndex
       ] =
         order;
 
-
       writeOrders(
         orders
       );
 
-
       console.log(
-        "VERIFIED PAID ORDER"
+        "VERIFIED PAID WATERLOO ORDER"
       );
-
 
       console.log(
         "Name:",
         order.fullName
       );
 
-
       console.log(
         "Tickets:",
         order.quantity
       );
-
 
       console.log(
         "Admission:",
         order.admissionCode
       );
 
-
-      /*
-       * Tell Square we successfully received
-       * the webhook before doing external work.
-       */
       response
         .status(
           200
@@ -2074,13 +1854,6 @@ app.post(
           "Payment verified"
         );
 
-
-      /*
-       * ONLY NOW:
-       *
-       * - send confirmation email
-       * - save to Google Sheet
-       */
       setImmediate(
         () => {
 
@@ -2088,14 +1861,12 @@ app.post(
             order.localOrderId
           );
 
-
           void savePaidOrderToGoogleSheet(
             order.localOrderId
           );
 
         }
       );
-
 
     } catch (
       error
@@ -2105,7 +1876,6 @@ app.post(
         "Webhook error:",
         error
       );
-
 
       response.sendStatus(
         400
@@ -2132,26 +1902,30 @@ app.use(
 
 function validateEnvironment() {
 
+  /*
+   * IMPORTANT:
+   *
+   * Waterloo's Square webhook variables are
+   * intentionally NOT required here yet.
+   *
+   * This allows Railway to start so we can
+   * generate the public Railway URL first.
+   *
+   * Afterward we will create the Square webhook
+   * and add:
+   *
+   * SQUARE_WEBHOOK_URL
+   * SQUARE_WEBHOOK_SIGNATURE_KEY
+   */
+
   const required = {
-
     SQUARE_ACCESS_TOKEN,
-
     SQUARE_LOCATION_ID,
-
-    SQUARE_WEBHOOK_SIGNATURE_KEY,
-
-    SQUARE_WEBHOOK_URL,
-
     GMAIL_USER,
-
     GMAIL_APP_PASSWORD,
-
     GOOGLE_SHEETS_WEBHOOK_URL,
-
     GOOGLE_SHEETS_SECRET
-
   };
-
 
   const missing =
     Object.entries(
@@ -2174,7 +1948,6 @@ function validateEnvironment() {
         ) =>
           name
       );
-
 
   if (
     missing.length
@@ -2202,7 +1975,6 @@ app.get(
   ) => {
 
     response.json({
-
       success:
         true,
 
@@ -2243,7 +2015,6 @@ app.get(
           GOOGLE_SHEETS_WEBHOOK_URL &&
           GOOGLE_SHEETS_SECRET
         )
-
     });
 
   }
@@ -2269,10 +2040,8 @@ app.post(
           request.body
         );
 
-
       const remainingCapacity =
         getRemainingCapacity();
-
 
       if (
         customer.quantity >
@@ -2284,7 +2053,6 @@ app.post(
             409
           )
           .json({
-
             success:
               false,
 
@@ -2293,16 +2061,13 @@ app.post(
               0
                 ? "Garba Night is currently sold out."
                 : `Only ${remainingCapacity} ticket(s) are currently available.`
-
           });
 
       }
 
-
       const totalAmountCents =
         customer.quantity *
         TICKET_PRICE_CENTS;
-
 
       const localOrderId =
         `WLOO-${Date.now()}-${crypto
@@ -2314,9 +2079,7 @@ app.post(
           )
           .toUpperCase()}`;
 
-
       const squareRequest = {
-
         idempotency_key:
           crypto.randomUUID(),
 
@@ -2324,7 +2087,6 @@ app.post(
           `${customer.quantity} Garba Night Waterloo ticket(s) for ${customer.fullName}`,
 
         quick_pay: {
-
           name:
             `Garba Night Waterloo — ${customer.quantity} Ticket${
               customer.quantity ===
@@ -2334,22 +2096,18 @@ app.post(
             }`,
 
           price_money: {
-
             amount:
               totalAmountCents,
 
             currency:
               "CAD"
-
           },
 
           location_id:
             SQUARE_LOCATION_ID
-
         },
 
         checkout_options: {
-
           redirect_url:
             `${FRONTEND_URL}/?payment=return`,
 
@@ -2361,36 +2119,28 @@ app.post(
 
           enable_loyalty:
             false
-
         },
 
         pre_populated_data: {
-
           buyer_email:
             customer.email,
 
           buyer_phone_number:
             customer.phone
-
         },
 
         payment_note:
           localOrderId
-
       };
-
 
       const squareResponse =
         await fetch(
           `${SQUARE_API_BASE}/v2/online-checkout/payment-links`,
-
           {
-
             method:
               "POST",
 
             headers: {
-
               Authorization:
                 `Bearer ${SQUARE_ACCESS_TOKEN}`,
 
@@ -2399,21 +2149,17 @@ app.post(
 
               "Square-Version":
                 "2026-07-15"
-
             },
 
             body:
               JSON.stringify(
                 squareRequest
               )
-
           }
         );
 
-
       const squareData =
         await squareResponse.json();
-
 
       if (
         !squareResponse.ok
@@ -2428,13 +2174,11 @@ app.post(
           )
         );
 
-
         return response
           .status(
             502
           )
           .json({
-
             success:
               false,
 
@@ -2448,16 +2192,13 @@ app.post(
                 ?.[0]
                 ?.code ||
               "Square could not create checkout."
-
           });
 
       }
 
-
       const paymentLink =
         squareData
           .payment_link;
-
 
       if (
         !paymentLink?.url ||
@@ -2469,45 +2210,28 @@ app.post(
             502
           )
           .json({
-
             success:
               false,
 
             message:
               "Square did not return a valid checkout link."
-
           });
 
       }
-
 
       const now =
         new Date()
           .toISOString();
 
-
-      /*
-       * Consent timestamp exists only if
-       * customer actively opted in.
-       */
       const marketingConsentTimestamp =
         customer.marketingConsent
           ? now
           : null;
 
-
       const orders =
         readOrders();
 
-
-      /*
-       * PENDING order is stored locally so
-       * Square's future webhook can be matched.
-       *
-       * THIS IS NOT SENT TO GOOGLE SHEETS.
-       */
       orders.push({
-
         localOrderId,
 
         squareOrderId:
@@ -2605,37 +2329,30 @@ app.post(
 
         expiredAt:
           null
-
       });
-
 
       writeOrders(
         orders
       );
 
-
       console.log(
-        "Checkout created:"
+        "Waterloo checkout created:"
       );
-
 
       console.log(
         "Local order:",
         localOrderId
       );
 
-
       console.log(
         "Square order:",
         paymentLink.order_id
       );
 
-
       console.log(
         "Tickets:",
         customer.quantity
       );
-
 
       console.log(
         "Expected total:",
@@ -2644,20 +2361,16 @@ app.post(
         )
       );
 
-
       console.log(
         "Marketing consent:",
         customer.marketingConsent
       );
 
-
       console.log(
         "Google Sheets: NOT SAVED YET — awaiting payment."
       );
 
-
       response.json({
-
         success:
           true,
 
@@ -2676,9 +2389,7 @@ app.post(
 
         remainingCapacity:
           getRemainingCapacity()
-
       });
-
 
     } catch (
       error
@@ -2689,20 +2400,17 @@ app.post(
         error
       );
 
-
       response
         .status(
           400
         )
         .json({
-
           success:
             false,
 
           message:
             error.message ||
             "Unable to create checkout."
-
         });
 
     }
@@ -2730,7 +2438,6 @@ app.get(
         100
       );
 
-
     const order =
       readOrders()
         .find(
@@ -2741,7 +2448,6 @@ app.get(
             localOrderId
         );
 
-
     if (
       !order
     ) {
@@ -2751,25 +2457,20 @@ app.get(
           404
         )
         .json({
-
           success:
             false,
 
           message:
             "Order not found."
-
         });
 
     }
 
-
     response.json({
-
       success:
         true,
 
       order: {
-
         localOrderId:
           order.localOrderId,
 
@@ -2790,9 +2491,7 @@ app.get(
 
         sheetStatus:
           order.sheetStatus
-
       }
-
     });
 
   }
@@ -2807,9 +2506,7 @@ try {
 
   ensureOrdersFile();
 
-
   validateEnvironment();
-
 
   app.listen(
     PORT,
@@ -2850,22 +2547,35 @@ try {
       );
 
       console.log(
-        `Square webhook: ${SQUARE_WEBHOOK_URL}`
+        `Square webhook configured: ${
+          Boolean(
+            SQUARE_WEBHOOK_URL &&
+            SQUARE_WEBHOOK_SIGNATURE_KEY
+          )
+        }`
       );
 
       console.log(
-        "Email: configured"
+        `Email configured: ${
+          Boolean(
+            emailTransporter
+          )
+        }`
       );
 
       console.log(
-        "Google Sheets: configured"
+        `Google Sheets configured: ${
+          Boolean(
+            GOOGLE_SHEETS_WEBHOOK_URL &&
+            GOOGLE_SHEETS_SECRET
+          )
+        }`
       );
 
       console.log("");
 
     }
   );
-
 
 } catch (
   error
@@ -2875,7 +2585,6 @@ try {
     "Server could not start:",
     error.message
   );
-
 
   process.exit(
     1
