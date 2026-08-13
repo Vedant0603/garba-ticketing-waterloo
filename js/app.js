@@ -13,7 +13,7 @@
  * For now, localhost lets you test the Waterloo frontend locally.
  */
 const API_BASE =
-  "http://localhost:3000";
+  "https://garba-ticketing-waterloo-production.up.railway.app";
 
 const TICKET_PRICE_CENTS =
   900;
