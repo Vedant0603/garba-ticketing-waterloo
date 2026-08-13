@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0"
+  />
+
+  <meta
+    name="description"
+    content="Purchase tickets for Garba Night at RIM Park Waterloo securely through Square."
+  />
+
+  <title>Garba Night Waterloo Tickets</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+
+  <link
+    rel="preconnect"
+    href="https://fonts.gstatic.com"
+    crossorigin
+  />
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700;800&family=Playfair+Display:wght@700;800&display=swap"
+    rel="stylesheet"
+  />
+
+  <link rel="stylesheet" href="./style.css?v=21" />
+
+  <style>
+    .purchaser-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    .purchaser-grid .field {
+      width: 100%;
+      min-width: 0;
+    }
+
+    .purchaser-grid .field input {
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .checkbox-options {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 24px;
+    }
+
+    .consent-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .consent-row input {
+      flex: 0 0 auto;
+      margin-top: 4px;
+    }
+
+    .marketing-consent {
+      padding-bottom: 16px;
+      border-bottom: 1px solid rgba(80, 40, 30, 0.12);
+    }
+
+    .optional-label {
+      font-weight: 700;
+    }
+
+    .summary-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+      padding: 24px 0;
+      margin-top: 20px;
+      border-top: none;
+      border-bottom: 1px solid rgba(80, 40, 30, 0.15);
+    }
+
+    .summary-lines > div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding-bottom: 16px;
+    }
+
+    .summary-lines > div + div {
+      padding-top: 16px;
+      padding-bottom: 0;
+      border-top: 1px solid rgba(80, 40, 30, 0.15);
+    }
+
+    .summary-lines span {
+      color: #6d554d;
+    }
+
+    .summary-lines strong {
+      color: #2b1712;
+      text-align: right;
+    }
+
+    .summary-total-only {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 20px;
+      padding: 26px 0 20px;
+    }
+
+    .summary-total-only span {
+      font-size: 17px;
+      font-weight: 700;
+    }
+
+    .summary-total-only strong {
+      font-size: 28px;
+      font-weight: 800;
+    }
+
+    .summary-buy-button {
+      width: 100%;
+      border: 0;
+      border-radius: 999px;
+      padding: 17px 22px;
+      margin-top: 4px;
+      background: #cf371f;
+      color: white;
+      font: inherit;
+      font-weight: 700;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    .summary-buy-button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    @media (max-width: 900px) {
+      .purchaser-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <header class="site-header">
+    <div class="container nav">
+
+      <a
+        class="brand"
+        href="#top"
+        aria-label="Garba Night home"
+      >
+        <span class="brand-mark">✦</span>
+
+        <span>
+          <strong>Garba Night</strong>
+          <small>Cultural</small>
+        </span>
+      </a>
+
+      <a
+        class="nav-button"
+        href="#tickets"
+      >
+        Buy Tickets
+      </a>
+
+    </div>
+  </header>
+
+
+  <main id="top">
+
+    <section class="hero">
+
+      <div class="hero-glow hero-glow-one"></div>
+      <div class="hero-glow hero-glow-two"></div>
+
+      <div class="container hero-grid">
+
+        <div class="hero-copy">
+
+          <p class="eyebrow">
+            A NIGHT OF MUSIC, DANCE & COMMUNITY
+          </p>
+
+          <h1>
+            Celebrate Garba in unforgettable style.
+          </h1>
+
+          <p class="hero-description">
+            Join us for a colourful evening of Garba, music,
+            celebration and community. Select your tickets and
+            pay securely online through Square.
+          </p>
+
+
+          <div class="event-details">
+
+            <div class="detail-card">
+              <span class="detail-icon">📅</span>
+
+              <div>
+                <small>Date</small>
+
+                <strong>
+                  Friday, October 16, 2026
+                </strong>
+              </div>
+            </div>
+
+
+            <div class="detail-card">
+              <span class="detail-icon">🕖</span>
+
+              <div>
+                <small>Time</small>
+
+                <strong>
+                  Doors 6:00 PM • Event 7:00 PM – 11:00 PM
+                </strong>
+              </div>
+            </div>
+
+
+            <div class="detail-card">
+              <span class="detail-icon">📍</span>
+
+              <div>
+                <small>Location</small>
+
+                <strong>
+                  RIM Park, Waterloo
+                </strong>
+              </div>
+            </div>
+
+          </div>
+
+
+          <a
+            class="primary-button"
+            href="#tickets"
+          >
+            Get Tickets
+          </a>
+
+        </div>
+
+
+        <div
+          class="hero-card"
+          aria-label="Garba Night Waterloo ticket preview"
+        >
+
+          <div class="ticket-art">
+
+            <div class="ticket-pattern"></div>
+
+            <p class="ticket-mini">
+              CULTURAL PRESENTS
+            </p>
+
+            <h2>
+              GARBA
+              <br />
+              NIGHT
+            </h2>
+
+            <p class="ticket-subtitle">
+              Dance • Music • Celebration
+            </p>
+
+            <div class="ticket-divider"></div>
+
+            <div class="ticket-meta">
+              <span>OCT 16</span>
+              <span>7 PM</span>
+              <span>WATERLOO</span>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </section>
+
+
+    <section
+      class="tickets-section"
+      id="tickets"
+    >
+
+      <div class="container">
+
+        <div class="section-heading">
+
+          <p class="eyebrow">
+            RESERVE YOUR SPOT
+          </p>
+
+          <h2>
+            Buy your Garba tickets
+          </h2>
+
+          <p>
+            Enter the purchaser’s information and the number
+            of tickets needed. You will then be redirected to
+            Square’s secure payment page.
+          </p>
+
+        </div>
+
+
+        <div class="checkout-layout">
+
+          <form
+            class="checkout-card"
+            id="ticket-form"
+            novalidate
+          >
+
+            <div class="form-section">
+
+              <div class="form-section-heading">
+
+                <span>1</span>
+
+                <div>
+
+                  <h3>
+                    Select tickets
+                  </h3>
+
+                  <p>
+                    Enter any whole-number quantity,
+                    subject to availability.
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <div class="ticket-option">
+
+                <div>
+
+                  <strong>
+                    General Admission
+                  </strong>
+
+                  <p>
+                    Entry for one guest
+                  </p>
+
+                </div>
+
+
+                <div class="ticket-price">
+
+                  <label class="quantity-control">
+
+                    <span>
+                      Quantity
+                    </span>
+
+                    <input
+                      id="quantity"
+                      name="quantity"
+                      type="number"
+                      inputmode="numeric"
+                      min="1"
+                      max="550"
+                      step="1"
+                      value="1"
+                      required
+                    />
+
+                  </label>
+
+                </div>
+
+              </div>
+
+
+              <p class="availability-note">
+                Maximum venue capacity: 550 guests.
+                Ticket availability is verified by the system
+                before checkout.
+              </p>
+
+            </div>
+
+
+            <div class="form-section">
+
+              <div class="form-section-heading">
+
+                <span>2</span>
+
+                <div>
+
+                  <h3>
+                    Purchaser information
+                  </h3>
+
+                  <p>
+                    The person named here must be present
+                    at event check-in.
+                  </p>
+
+                </div>
+
+              </div>
+
+
+              <div class="purchaser-grid">
+
+                <div class="field">
+
+                  <label for="fullName">
+                    Purchaser’s full legal name
+                  </label>
+
+                  <input
+                    id="fullName"
+                    name="fullName"
+                    type="text"
+                    autocomplete="name"
+                    placeholder="Your full legal name"
+                    maxlength="100"
+                    required
+                  />
+
+                  <small class="error-message"></small>
+
+                </div>
+
+
+                <div class="field">
+
+                  <label for="email">
+                    Email address
+                  </label>
+
+                  <input
+                    id="email"
+                    name="email"
+                    type="email"
+                    autocomplete="email"
+                    placeholder="you@example.com"
+                    maxlength="150"
+                    required
+                  />
+
+                  <small class="error-message"></small>
+
+                </div>
+
+
+                <div class="field">
+
+                  <label for="phone">
+                    Phone number
+                  </label>
+
+                  <input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    autocomplete="tel"
+                    placeholder="647-555-1234"
+                    maxlength="30"
+                    required
+                  />
+
+                  <small class="error-message"></small>
+
+                </div>
+
+              </div>
+
+            </div>
+
+
+            <div class="entry-policy">
+
+              <h3>
+                Entry requirements
+              </h3>
+
+              <ul>
+
+                <li>
+                  The original purchaser named on the
+                  order must be present.
+                </li>
+
+                <li>
+                  Please bring valid photo identification
+                  matching the purchaser’s name.
+                </li>
+
+                <li>
+                  The ticket confirmation email containing
+                  the admission code must be shown at check-in.
+                </li>
+
+                <li>
+                  Admission is approved only after the
+                  admission code is validated against the
+                  event registration records.
+                </li>
+
+              </ul>
+
+            </div>
+
+
+            <div class="checkbox-options">
+
+              <label class="consent-row marketing-consent">
+
+                <input
+                  id="marketingConsent"
+                  name="marketingConsent"
+                  type="checkbox"
+                  value="yes"
+                />
+
+                <span>
+
+                  <span class="optional-label">
+                    Optional:
+                  </span>
+
+                  Yes, I would like to receive emails from
+                  Shree Hari Seva Trust about future events,
+                  announcements and related updates. I understand
+                  that I can unsubscribe at any time.
+
+                </span>
+
+              </label>
+
+
+              <label class="consent-row">
+
+                <input
+                  id="agreement"
+                  name="agreement"
+                  type="checkbox"
+                  required
+                />
+
+                <span>
+                  I confirm that the information entered is
+                  correct, the named purchaser will attend,
+                  and tickets will only be issued after Square
+                  confirms successful payment.
+                </span>
+
+              </label>
+
+            </div>
+
+
+            <button
+              class="submit-button"
+              id="pay-button"
+              type="submit"
+            >
+              Buy Tickets
+            </button>
+
+
+            <p class="privacy-note">
+              Card information is entered only on Square’s
+              secure checkout page. This website never receives
+              or stores card numbers, PINs or CVC codes.
+            </p>
+
+          </form>
+
+
+          <aside class="order-summary">
+
+            <p class="summary-label">
+              ORDER SUMMARY
+            </p>
+
+
+            <div class="summary-event">
+
+              <div class="summary-date">
+
+                <span>
+                  OCT
+                </span>
+
+                <strong>
+                  16
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <h3>
+                  Garba Night 2026
+                </h3>
+
+                <p>
+                  RIM Park
+                </p>
+
+                <p>
+                  Doors 6:00 PM • 7:00 PM – 11:00 PM
+                </p>
+
+              </div>
+
+            </div>
+
+
+            <div class="summary-lines">
+
+              <div>
+
+                <span>
+                  General Admission
+                </span>
+
+                <strong>
+                  $9.00 each
+                </strong>
+
+              </div>
+
+
+              <div>
+
+                <span>
+                  Total Tickets Purchased
+                </span>
+
+                <strong
+                  id="summary-quantity"
+                  data-ticket-quantity
+                >
+                  1
+                </strong>
+
+              </div>
+
+            </div>
+
+
+            <div class="summary-total-only">
+
+              <span>
+                Total
+              </span>
+
+              <strong
+                id="summary-total"
+                data-ticket-total
+              >
+                $9.00
+              </strong>
+
+            </div>
+
+
+            <button
+              class="summary-buy-button"
+              id="summary-buy-button"
+              type="button"
+            >
+              Buy Tickets
+            </button>
+
+          </aside>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+
+  <footer class="site-footer">
+
+    <div class="container footer-content">
+
+      <div>
+
+        <strong>
+          Garba Night 2026 — Waterloo
+        </strong>
+
+        <p>
+          Secure ticket checkout powered by Square
+        </p>
+
+      </div>
+
+
+      <p>
+        The original purchaser must be present at admission.
+      </p>
+
+    </div>
+
+  </footer>
+
+
+  <script src="./js/app.js?v=21"></script>
+
+</body>
+</html>
