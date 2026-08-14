@@ -127,6 +127,95 @@ const GOOGLE_SHEETS_SECRET =
   process.env
     .GOOGLE_SHEETS_SECRET;
 
+async function updateGoogleSheetEmailStatus(
+  order,
+  emailStatus,
+  emailError = ""
+) {
+  if (
+    !GOOGLE_SHEETS_WEBHOOK_URL ||
+    !GOOGLE_SHEETS_SECRET ||
+    !order
+  ) {
+    return;
+  }
+
+  try {
+    const response =
+      await fetch(
+        GOOGLE_SHEETS_WEBHOOK_URL,
+        {
+          method: "POST",
+
+          headers: {
+            "Content-Type":
+              "text/plain;charset=utf-8"
+          },
+
+          body:
+            JSON.stringify({
+              secret:
+                GOOGLE_SHEETS_SECRET,
+
+              action:
+                "EMAIL_STATUS",
+
+              localOrderId:
+                order.localOrderId,
+
+              admissionCode:
+                order.admissionCode,
+
+              fullName:
+                order.fullName,
+
+              email:
+                order.email,
+
+              phone:
+                order.phone,
+
+              quantity:
+                order.quantity,
+
+              paidAmount:
+                Number(
+                  order.paidAmountCents || 0
+                ) / 100,
+
+              currency:
+                order.currency || "CAD",
+
+              emailStatus:
+                emailStatus,
+
+              emailSentAt:
+                emailStatus === "SENT"
+                  ? new Date().toISOString()
+                  : "",
+
+              emailError:
+                emailError || ""
+            })
+        }
+      );
+
+    if (!response.ok) {
+      console.error(
+        "Could not update email status in Google Sheets:",
+        response.status
+      );
+    }
+
+  } catch (error) {
+
+    console.error(
+      "Google Sheets email-status update failed:",
+      error.message
+    );
+
+  }
+}
 
 /* --------------------------------------------------------------------------
    SQUARE
@@ -1374,37 +1463,46 @@ async function sendConfirmationEmail(
           )
       });
 
-    updateOrder(
-      localOrderId,
-      {
-        emailStatus:
-          "SENT",
+updateOrder(
+  localOrderId,
+  {
+    emailStatus:
+      "SENT",
 
-        emailMessageId:
-          result.messageId,
+    emailMessageId:
+      result.messageId,
 
-        emailSentAt:
-          new Date()
-            .toISOString(),
+    emailSentAt:
+      new Date()
+        .toISOString(),
 
-        emailError:
-          null
-      }
-    );
+    emailError:
+      null
+  }
+);
 
-    console.log(
-      "Confirmation email sent:",
-      order.email
-    );
+await updateGoogleSheetEmailStatus(
+  order,
+  "SENT"
+);
 
-  } catch (
-    error
-  ) {
+console.log(
+  "Confirmation email sent:",
+  order.email
+);
+
+    } catch (error) {
 
     console.error(
       "Email failed:",
       error
     );
+
+    const safeEmailError =
+      cleanText(
+        error.message,
+        500
+      );
 
     updateOrder(
       localOrderId,
@@ -1413,11 +1511,14 @@ async function sendConfirmationEmail(
           "FAILED",
 
         emailError:
-          cleanText(
-            error.message,
-            500
-          )
+          safeEmailError
       }
+    );
+
+    await updateGoogleSheetEmailStatus(
+      order,
+      "FAILED",
+      safeEmailError
     );
 
   }
