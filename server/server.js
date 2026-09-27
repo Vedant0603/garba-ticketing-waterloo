@@ -73,7 +73,7 @@ const TICKET_PRICE_CENTS =
   Number(
     process.env
       .TICKET_PRICE_CENTS ||
-    900
+    600
   );
 
 const MAX_CAPACITY =

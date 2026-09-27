@@ -16,7 +16,7 @@ const API_BASE =
   "https://garba-ticketing-waterloo-production.up.railway.app";
 
 const TICKET_PRICE_CENTS =
-  900;
+  600;
 
 const MAX_CAPACITY =
   550;
